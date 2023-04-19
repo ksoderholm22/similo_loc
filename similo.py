@@ -33,7 +33,7 @@ def load_lottiefile(filepath: str):
 
 @st.cache_data
 def pull_clean():
-    master=pd.read_csv('/Users/kevinsoderholm/Desktop/similo/data/MASTER_ZIP.csv')
+    master=pd.read_csv('MASTER_ZIP.csv')
     return master
 
 #col1,col2,col3=st.columns(3)
