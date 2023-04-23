@@ -58,10 +58,14 @@ if selected=="Intro":
         col1,col2=st.columns(2)
         with col1:
             st.header('Use Cases')
-            st.write('_Remote work got you thinking about relocation?_')
-            st.write('_Looking for a new vacation spot?_')
-            st.write('_Conducting market research for product expansion?_')
-            st.write('_Just here to play and learn?_')
+            st.markdown(
+                """
+                - _Remote work got you thinking about relocation?_
+                - _Looking for a new vacation spot?_
+                - _Conducting market research for product expansion?_
+                - _Just here to play and learn?_
+                """
+                )
         with col2:
             lottie2 = load_lottiefile("place2.json")
             st_lottie(lottie2,key='place',height=300,width=300)
