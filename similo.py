@@ -92,7 +92,7 @@ if selected=="Search":
         col1.caption('0.5 = Less Important')
         col2.caption('1.0 = Default')
         col3.caption('1.5 = More Important')
-        people_select=st.slider(label='People',min_value=0.0, max_value=2.0, step=0.25, value=1.0)
+        people_select=st.slider(label='People',min_value=0.5, max_value=1.5, step=0.1, value=1.0)
         home_select=st.slider(label='Home',min_value=0.5, max_value=1.5, step=0.1, value=1.0)
         work_select=st.slider(label='Work',min_value=0.5, max_value=1.5, step=0.1, value=1.0)
         environment_select=st.slider(label='Environment',min_value=0.5, max_value=1.5, step=0.1, value=1.0)
