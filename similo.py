@@ -180,7 +180,7 @@ if selected=="Search":
             cols=['Rank','OVERALL','PEOPLE','HOME','WORK','ENVIRONMENT','ZIP','County Title']
             df=df_top10[cols+['SAVE','NOTES']]
             df=df.set_index('Rank')
-            edited_df=st.experimental_data_editor(df)
+            edited_df=st.experimental_data_editor(df,use_container_width=True)
             save=edited_df[edited_df['SAVE']==True]
             save=save.reset_index()
             csv = convert_df(save[cols])
