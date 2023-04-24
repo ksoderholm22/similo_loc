@@ -150,6 +150,7 @@ if selected=="Search":
         df_top10['LAT_R']=selected_record['LAT'][0]
         df_top10['LON_R']=selected_record['LON'][0]
         df_top10['SAVE']=False
+        df_top10['NOTES']=''
 
         st.header('Top '+'{}'.format(count_select)+' Most Similar Locations')
         #st.write('You selected zip code '+zip_select+' from '+selected_record['County Title'][0])
@@ -177,7 +178,7 @@ if selected=="Search":
             def convert_df(df):
                 return df.to_csv().encode('utf-8')
             cols=['Rank','OVERALL','PEOPLE','HOME','WORK','ENVIRONMENT','ZIP','County Title']
-            df=df_top10[cols+['SAVE']]
+            df=df_top10[cols+['SAVE','NOTES']]
             df=df.set_index('Rank')
             edited_df=st.experimental_data_editor(df)
             save=edited_df[edited_df['SAVE']==True]
