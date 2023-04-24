@@ -168,7 +168,7 @@ if selected=="Search":
             with st.expander('Expand for Table Info'):
                 st.markdown(
                 """
-                - The values for OVERALL, PEOPLE, HOME, WORK, and ENVIRONMENT are scaled similarity scores for the respective categories from 0-100 with 100 representing a perfect match.
+                - The values for OVERALL, PEOPLE, HOME, WORK, and ENVIRONMENT are scaled similarity scores for the respective categories with values of 0-100, where 100 represents a perfect match.
                 - Locations are ranked by their OVERALL score, which is a weighted average of the individual category scores.
                 - Save your research by checking locations in the SAVE column which will be added to csv for download.
                 """
