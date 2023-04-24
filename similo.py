@@ -73,6 +73,9 @@ if selected=="Intro":
     st.divider()
 
     st.header('Tutorial Video')
+    video_file = open('Similo_Tutorial.mp4', 'rb')
+    video_bytes = video_file.read()
+    st.video(video_bytes)
     
 #Search Page
 if selected=="Search":
