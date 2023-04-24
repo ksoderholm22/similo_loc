@@ -168,10 +168,9 @@ if selected=="Search":
             with st.expander('Expand for Table Info'):
                 st.markdown(
                 """
-                - The values for OVERALL, PEOPLE, HOME, WORK, and ENVIRONMENT in the table below are similarity scores for the respective categories from 0-100 with 100 representing a perfect match.
-                - Locations are ranked by their OVERALL score, which is a weighted average of the individual category scores.  The category scores contribute equally to the OVERALL score unless you specified otherwise in the Advanced section above.
-                - The column SAVE allows you to check which locations you want to save for more research after you are done using SimiLo.
-                - The CSV Download button will only save the selections you checked in the SAVE column.
+                - The values for OVERALL, PEOPLE, HOME, WORK, and ENVIRONMENT are scaled similarity scores for the respective categories from 0-100 with 100 representing a perfect match.
+                - Locations are ranked by their OVERALL score, which is a weighted average of the individual category scores.
+                - Save your research by checking locations in the SAVE column which will be added to csv for download.
                 """
                 )
             @st.cache_data
