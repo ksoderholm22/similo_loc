@@ -76,17 +76,17 @@ if selected=="Intro":
     
 #Search Page
 if selected=="Search":
-    st.subheader('Enter Zip (required):')
+    st.subheader('Enter Zip:')
     master=pull_clean()
     master['ZIP'] = master['ZCTA5'].astype(str).str.zfill(5)
     zip_select = st.selectbox(label='zip',options=['Zip']+list(master['ZIP'].unique()),label_visibility='collapsed')
     with st.expander('Advanced Settings'):
 
-        st.subheader('Filter Results (optional):')
+        st.subheader('Filter Results:')
         col1,col2=st.columns(2)
         states=sorted(list(master['STATE_LONG'].astype(str).unique()))
         state_select=col1.multiselect('Filter Results by State(s)',states)
-        count_select=col2.number_input(label='How Many Results?',min_value=5,max_value=25,value=10,step=5)
+        count_select=col2.number_input(label='How many similar locations returned? (5-25)',min_value=5,max_value=25,value=10,step=5)
         st.subheader('Data Category Importance (optional):')
         col1,col2,col3=st.columns([1,.7,.7])
         col1.caption('0.5 = Less Important')
