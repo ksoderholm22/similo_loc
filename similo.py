@@ -11,6 +11,7 @@ import json
 import requests
 from streamlit_lottie import st_lottie
 import pydeck as pdk
+import snowflake.connector
 
 #Layout
 st.set_page_config(
@@ -33,14 +34,24 @@ def load_lottiefile(filepath: str):
         return json.load(f)
 
 @st.cache_data
-def pull_clean_zip():
-    master_zip=pd.read_csv('MASTER_ZIP.csv',dtype={'ZCTA5': str})
-    return master_zip
+def pull_clean():
+    conn = snowflake.connector.connect(
+    user="KSODERHOLM22",
+    password="N3tL1ft!",
+    account="khbkccp-ap31754",
+    warehouse="COMPUTE_WH",
+    database="SIMILO",
+    schema="PUBLIC"
+    )
+    cur = conn.cursor()
+    cur.execute('select * from MASTER_ZIP')
+    master_zip=cur.fetch_pandas_all()
+    cur.execute('select * from MASTER_CITY')
+    master_city=cur.fetch_pandas_all()
+    conn.close()
+    return master_zip, master_city
 
-@st.cache_data
-def pull_clean_city():
-    master_city=pd.read_csv('MASTER_CITY.csv',dtype={'ZCTA5': str})
-    return master_city
+
 
 #Options Menu
 with st.sidebar:
@@ -87,15 +98,16 @@ if selected=="Search":
 
     st.subheader('Select Location')
 
-    master_zip=pull_clean_zip()
-    master_city=pull_clean_city()
+    master_zip,master_city=pull_clean()
     master_zip = master_zip.rename(columns={'ZCTA5': 'ZIP'})
     master_zip['ZIP'] = master_zip['ZIP'].astype(str).str.zfill(5)
+    master_zip
+    master_city
 
     loc_select=st.radio('Type',['Zip','City'],horizontal=True)
 
     if loc_select=='City':
-        city_select=st.selectbox(label='city',options=['City']+list(master_city['citystate'].unique()),label_visibility='collapsed')
+        city_select=st.selectbox(label='city',options=['City']+list(master_city['CITYSTATE'].unique()),label_visibility='collapsed')
         st.caption('Note: City is aggregated to the USPS designation which may include additional nearby cities/towns/municipalities')
         zip_select='Zip'
     if loc_select=='Zip':
@@ -124,15 +136,15 @@ if selected=="Search":
     #Benchmark
     if loc_select=='City':
         if city_select !='City':
-            selected_record = master_city[master_city['citystate']==city_select].reset_index()
-            selected_city=selected_record['citystate'][0]
+            selected_record = master_city[master_city['CITYSTATE']==city_select].reset_index()
+            selected_city=selected_record['CITYSTATE'][0]
             #selected_county=selected_record['County Title'][0]
             #Columns for scaling
-            PeopleCols_sc=['MED_AGE_sc','PCT_UNDER_18_sc','MED_HH_INC_sc', 'PCT_POVERTY_sc','PCT_BACH_MORE_sc']
-            HomeCols_sc=['HH_SIZE_sc','PCT_OWN_sc','MED_HOME_sc','PCT_UNIT1_sc','PCT_UNIT24_sc']
-            WorkCols_sc=['MEAN_COMMUTE_sc','PCT_WC_sc','PCT_WORKING_sc','PCT_SERVICE_sc','PCT_BC_sc']
-            EnvironmentCols_sc=['Pct_Water_sc','Env_Index_sc','Pct_ToPark_OneMile_sc','POP_DENSITY_sc','Metro_Index_sc']
-
+            PeopleCols_sc=['MED_AGE_SC','PCT_UNDER_18_SC','MED_HH_INC_SC', 'PCT_POVERTY_SC','PCT_BACH_MORE_SC']
+            HomeCols_sc=['HH_SIZE_SC','PCT_OWN_SC','MED_HOME_SC','PCT_UNIT1_SC','PCT_UNIT24_SC']
+            WorkCols_sc=['MEAN_COMMUTE_SC','PCT_WC_SC','PCT_WORKING_SC','PCT_SERVICE_SC','PCT_BC_SC']
+            EnvironmentCols_sc=['PCT_WATER_SC','ENV_INDEX_SC','PCT_TOPARK_ONEMILE_SC','POP_DENSITY_SC','METRO_INDEX_SC']
+            
             # Calculate the euclidian distance between the selected record and the rest of the dataset
             People_dist             = euclidean_distances(filt_master_city.loc[:, PeopleCols_sc], selected_record[PeopleCols_sc].values.reshape(1, -1))
             Home_dist               = euclidean_distances(filt_master_city.loc[:, HomeCols_sc], selected_record[HomeCols_sc].values.reshape(1, -1))
@@ -167,7 +179,7 @@ if selected=="Search":
             df_top10 = pd.merge(df_similarity, filt_master_city, left_on='index', right_index=True).reset_index(drop=True)
             df_top10=df_top10.loc[1:count_select]
             df_top10['Rank']=list(range(1,count_select+1))
-            df_top10['Ranking']=df_top10['Rank'].astype(str)+'- '+df_top10['citystate']
+            df_top10['Ranking']=df_top10['Rank'].astype(str)+'- '+df_top10['CITYSTATE']
             df_top10['LAT_R']=selected_record['LAT'][0]
             df_top10['LON_R']=selected_record['LON'][0]
             df_top10['SAVE']=False
@@ -198,7 +210,7 @@ if selected=="Search":
                 @st.cache_data
                 def convert_df(df):
                     return df.to_csv().encode('utf-8')
-                cols=['Rank','OVERALL','PEOPLE','HOME','WORK','ENVIRONMENT','citystate']
+                cols=['Rank','OVERALL','PEOPLE','HOME','WORK','ENVIRONMENT','CITYSTATE']
                 df=df_top10[cols+['SAVE','NOTES']]
                 df=df.set_index('Rank')
                 edited_df=st.experimental_data_editor(df)
@@ -213,7 +225,7 @@ if selected=="Search":
                 token = "pk.eyJ1Ijoia3NvZGVyaG9sbTIyIiwiYSI6ImNsZjI2djJkOTBmazU0NHBqdzBvdjR2dzYifQ.9GkSN9FUYa86xldpQvCvxA" # you will need your own token
                 #mapbox://styles/mapbox/streets-v12
                 fig1 = px.scatter_mapbox(df_top10, lat='LAT',lon='LON',center=go.layout.mapbox.Center(lat=latcenter,lon=loncenter),
-                                     color="Rank", color_continuous_scale=px.colors.sequential.ice, hover_name='citystate', hover_data=['Rank'],zoom=3,)
+                                     color="Rank", color_continuous_scale=px.colors.sequential.ice, hover_name='CITYSTATE', hover_data=['Rank'],zoom=3,)
                 fig1.update_traces(marker={'size': 15})
                 fig1.update_layout(mapbox_style="mapbox://styles/mapbox/satellite-streets-v12",
                                mapbox_accesstoken=token)
@@ -226,7 +238,7 @@ if selected=="Search":
             rank_select=st.selectbox('From rankings above, which one do you want to analyze?',list(df_top10['Ranking']))
             if rank_select:
                 compare_record=df_top10[df_top10['Ranking']==rank_select].reset_index(drop=True)
-                compare_city=compare_record['citystate'][0]
+                compare_city=compare_record['CITYSTATE'][0]
                 #compare_county=compare_record['County Title'][0]
                 compare_state=compare_record['STATE_SHORT'][0].lower()
                 #st.write(selected_zip+' in '+selected_county+' VS '+compare_zip+' in '+compare_county)
@@ -258,9 +270,9 @@ if selected=="Search":
                 with tab2:
                     selected_record['PCT_18_65']=selected_record['PCT_OVER_18']-selected_record['PCT_OVER_65']
                     compare_record['PCT_18_65']=compare_record['PCT_OVER_18']-compare_record['PCT_OVER_65']
-                    dif_cols=['MED_AGE','MED_HH_INC','PCT_POVERTY','PCT_BACH_MORE','POP_DENSITY','Metro_Index',
+                    dif_cols=['MED_AGE','MED_HH_INC','PCT_POVERTY','PCT_BACH_MORE','POP_DENSITY','METRO_INDEX',
                         'HH_SIZE','FAM_SIZE','MED_HOME','MED_RENT','PCT_UNIT1','PCT_WORKING',
-                        'MEAN_COMMUTE','Pct_Water','Env_Index','Pct_ToPark_HalfMile','Pct_ToPark_OneMile']
+                        'MEAN_COMMUTE','PCT_WATER','ENV_INDEX','PCT_TOPARK_HALFMILE','PCT_TOPARK_ONEMILE']
                     dif_record=compare_record[dif_cols]-selected_record[dif_cols]
                     st.write(
                     """
@@ -396,10 +408,10 @@ if selected=="Search":
                     col1,col2=st.columns(2)
                     col1.caption('Selected')
                     col1.write('Location Type')
-                    col1.write(selected_record['Metropolitan'][0])
+                    col1.write(selected_record['METROPOLITAN'][0])
                     col2.caption('Similar')
                     col2.write('Location Type')
-                    col2.write(compare_record['Metropolitan'][0])
+                    col2.write(compare_record['METROPOLITAN'][0])
                     st.divider()
                     col1,col2=st.columns(2)
                     col1.caption('Selected')
@@ -409,40 +421,41 @@ if selected=="Search":
                     st.divider()
                     col1,col2=st.columns(2)
                     col1.caption('Selected')
-                    col1.metric('Pct Area is Water','{:.2%}'.format(selected_record['Pct_Water'][0]))
+                    col1.metric('Pct Area is Water','{:.2%}'.format(selected_record['PCT_WATER'][0]))
                     col2.caption('Similar')
-                    col2.metric('Pct Area is Water','{:.2%}'.format(compare_record['Pct_Water'][0]),delta='{:.2%}'.format(dif_record['Pct_Water'][0]))
+                    col2.metric('Pct Area is Water','{:.2%}'.format(compare_record['PCT_WATER'][0]),delta='{:.2%}'.format(dif_record['PCT_WATER'][0]))
                     st.divider()
                     col1,col2=st.columns(2)
                     col1.caption('Selected')
-                    col1.metric('Environmental Quality Index','{:.2f}'.format(selected_record['Env_Index'][0].round(2)))
+                    col1.metric('Environmental Quality Index','{:.2f}'.format(selected_record['ENV_INDEX'][0].round(2)))
                     col2.caption('Similar')
-                    col2.metric('Environmental Quality Index','{:.2f}'.format(compare_record['Env_Index'][0].round(2)),delta='{:.2f}'.format(dif_record['Env_Index'][0]))
+                    col2.metric('Environmental Quality Index','{:.2f}'.format(compare_record['ENV_INDEX'][0].round(2)),delta='{:.2f}'.format(dif_record['ENV_INDEX'][0]))
                     st.divider()
                     col1,col2=st.columns(2)
                     col1.caption('Selected')
-                    col1.metric('Pct within 0.5 mile to Park','{:.1%}'.format(selected_record['Pct_ToPark_HalfMile'][0].round(2)/100))
+                    col1.metric('Pct within 0.5 mile to Park','{:.1%}'.format(selected_record['PCT_TOPARK_HALFMILE'][0].round(2)/100))
                     col2.caption('Similar')
-                    col2.metric('Pct within 0.5 mile to Park','{:.1%}'.format(compare_record['Pct_ToPark_HalfMile'][0].round(2)/100),delta='{:.1%}'.format(dif_record['Pct_ToPark_HalfMile'][0]/100))
+                    col2.metric('Pct within 0.5 mile to Park','{:.1%}'.format(compare_record['PCT_TOPARK_HALFMILE'][0].round(2)/100),delta='{:.1%}'.format(dif_record['PCT_TOPARK_HALFMILE'][0]/100))
                     st.divider()
                     col1,col2=st.columns(2)
                     col1.caption('Selected')
-                    col1.metric('Pct within 1 mile to Park','{:.1%}'.format(selected_record['Pct_ToPark_OneMile'][0].round(2)/100))
+                    col1.metric('Pct within 1 mile to Park','{:.1%}'.format(selected_record['PCT_TOPARK_ONEMILE'][0].round(2)/100))
                     col2.caption('Similar')
-                    col2.metric('Pct within 1 mile to Park','{:.1%}'.format(compare_record['Pct_ToPark_OneMile'][0].round(2)/100),delta='{:.1%}'.format(dif_record['Pct_ToPark_OneMile'][0]/100))
+                    col2.metric('Pct within 1 mile to Park','{:.1%}'.format(compare_record['PCT_TOPARK_ONEMILE'][0].round(2)/100),delta='{:.1%}'.format(dif_record['PCT_TOPARK_ONEMILE'][0]/100))
                     
     
                    
     if zip_select != 'Zip':
         selected_record = master_zip[master_zip['ZIP']==zip_select].reset_index()
         selected_zip=selected_record['ZIP'][0]
-        selected_county=selected_record['County Title'][0]
+        selected_county=selected_record['COUNTY_NAME'][0]
+        selected_state=selected_record['STATE_SHORT'][0]
 
         #Columns for scaling
-        PeopleCols_sc=['MED_AGE_sc','PCT_UNDER_18_sc','MED_HH_INC_sc', 'PCT_POVERTY_sc','PCT_BACH_MORE_sc']
-        HomeCols_sc=['HH_SIZE_sc','PCT_OWN_sc','MED_HOME_sc','PCT_UNIT1_sc','PCT_UNIT24_sc']
-        WorkCols_sc=['MEAN_COMMUTE_sc','PCT_WC_sc','PCT_WORKING_sc','PCT_SERVICE_sc','PCT_BC_sc']
-        EnvironmentCols_sc=['Pct_Water_sc','Env_Index_sc','Pct_ToPark_OneMile_sc','POP_DENSITY_sc','Metro_Index_sc']
+        PeopleCols_sc=['MED_AGE_SC','PCT_UNDER_18_SC','MED_HH_INC_SC', 'PCT_POVERTY_SC','PCT_BACH_MORE_SC']
+        HomeCols_sc=['HH_SIZE_SC','PCT_OWN_SC','MED_HOME_SC','PCT_UNIT1_SC','PCT_UNIT24_SC']
+        WorkCols_sc=['MEAN_COMMUTE_SC','PCT_WC_SC','PCT_WORKING_SC','PCT_SERVICE_SC','PCT_BC_SC']
+        EnvironmentCols_sc=['PCT_WATER_SC','ENV_INDEX_SC','PCT_TOPARK_ONEMILE_SC','POP_DENSITY_SC','METRO_INDEX_SC']
 
         # Calculate the euclidian distance between the selected record and the rest of the dataset
         People_dist             = euclidean_distances(filt_master_zip.loc[:, PeopleCols_sc], selected_record[PeopleCols_sc].values.reshape(1, -1))
@@ -477,8 +490,9 @@ if selected=="Search":
         # Merge the original dataframe with the similarity dataframe to display the top 10 most similar records
         df_top10 = pd.merge(df_similarity, filt_master_zip, left_on='index', right_index=True).reset_index(drop=True)
         df_top10=df_top10.loc[1:count_select]
-        df_top10['Rank']=list(range(1,count_select+1))
-        df_top10['Ranking']=df_top10['Rank'].astype(str)+' - Zip Code '+df_top10['ZIP']+' from '+df_top10['County Title']
+        df_top10['RANK']=list(range(1,count_select+1))
+        df_top10
+        df_top10['RANKING']=df_top10['RANK'].astype(str)+' - Zip Code '+df_top10['ZIP']+' from '+df_top10['COUNTY_NAME']+' County, '+df_top10['STATE_SHORT']
         df_top10['LAT_R']=selected_record['LAT'][0]
         df_top10['LON_R']=selected_record['LON'][0]
         df_top10['SAVE']=False
@@ -509,9 +523,9 @@ if selected=="Search":
             @st.cache_data
             def convert_df(df):
                 return df.to_csv().encode('utf-8')
-            cols=['Rank','OVERALL','PEOPLE','HOME','WORK','ENVIRONMENT','ZIP','County Title']
+            cols=['RANK','OVERALL','PEOPLE','HOME','WORK','ENVIRONMENT','ZIP','COUNTY_NAME']
             df=df_top10[cols+['SAVE','NOTES']]
-            df=df.set_index('Rank')
+            df=df.set_index('RANK')
             edited_df=st.experimental_data_editor(df)
             save=edited_df[edited_df['SAVE']==True]
             save=save.reset_index()
@@ -524,7 +538,7 @@ if selected=="Search":
             token = "pk.eyJ1Ijoia3NvZGVyaG9sbTIyIiwiYSI6ImNsZjI2djJkOTBmazU0NHBqdzBvdjR2dzYifQ.9GkSN9FUYa86xldpQvCvxA" # you will need your own token
             #mapbox://styles/mapbox/streets-v12
             fig1 = px.scatter_mapbox(df_top10, lat='LAT',lon='LON',center=go.layout.mapbox.Center(lat=latcenter,lon=loncenter),
-                                    color="Rank", color_continuous_scale=px.colors.sequential.ice, hover_name='ZIP', hover_data=['Rank','County Title'],zoom=3,)
+                                    color="RANK", color_continuous_scale=px.colors.sequential.ice, hover_name='ZIP', hover_data=['RANK','COUNTY_NAME'],zoom=3,)
             fig1.update_traces(marker={'size': 15})
             fig1.update_layout(mapbox_style="mapbox://styles/mapbox/satellite-streets-v12",
                                mapbox_accesstoken=token)
@@ -534,20 +548,20 @@ if selected=="Search":
         st.divider()
 
         st.header('Location Deep Dive')
-        rank_select=st.selectbox('From rankings above, which one do you want to investigate?',list(df_top10['Ranking']))
+        rank_select=st.selectbox('From rankings above, which one do you want to investigate?',list(df_top10['RANKING']))
         if rank_select:
-            compare_record=df_top10[df_top10['Ranking']==rank_select].reset_index(drop=True)
+            compare_record=df_top10[df_top10['RANKING']==rank_select].reset_index(drop=True)
             compare_zip=compare_record['ZIP'][0]
-            compare_county=compare_record['County Title'][0]
-            compare_state=compare_record['STATE_SHORT'][0].lower()
+            compare_county=compare_record['COUNTY_NAME'][0]
+            compare_state=compare_record['STATE_SHORT'][0]
             #st.write(selected_zip+' in '+selected_county+' VS '+compare_zip+' in '+compare_county)
             tab1,tab2,tab3,tab4,tab5 = st.tabs(['Overall','People','Home','Work','Environment'])
             with tab1:
                 col1,col2=st.columns(2)
                 col1.subheader('Selected')
-                col1.write(selected_zip+' in '+selected_county)
+                col1.write(selected_zip+' in '+selected_county+' County, '+selected_state)
                 col2.subheader('Similar')
-                col2.write(compare_zip+' in '+compare_county)
+                col2.write(compare_zip+' in '+compare_county+' County, '+compare_state)
                 st.divider()
                 st.subheader('Similarity Scores')
                 col1,col2,col3,col4,col5=st.columns(5)
@@ -569,9 +583,9 @@ if selected=="Search":
             with tab2:
                 selected_record['PCT_18_65']=selected_record['PCT_OVER_18']-selected_record['PCT_OVER_65']
                 compare_record['PCT_18_65']=compare_record['PCT_OVER_18']-compare_record['PCT_OVER_65']
-                dif_cols=['MED_AGE','MED_HH_INC','PCT_POVERTY','PCT_BACH_MORE','POP_DENSITY','Metro_Index',
+                dif_cols=['MED_AGE','MED_HH_INC','PCT_POVERTY','PCT_BACH_MORE','POP_DENSITY','METRO_INDEX',
                         'HH_SIZE','FAM_SIZE','MED_HOME','MED_RENT','PCT_UNIT1','PCT_WORKING',
-                        'MEAN_COMMUTE','Pct_Water','Env_Index','Pct_ToPark_HalfMile','Pct_ToPark_OneMile']
+                        'MEAN_COMMUTE','PCT_WATER','ENV_INDEX','PCT_TOPARK_HALFMILE','PCT_TOPARK_ONEMILE']
                 dif_record=compare_record[dif_cols]-selected_record[dif_cols]
                 st.write(
                 """
@@ -706,10 +720,10 @@ if selected=="Search":
                 col1,col2=st.columns(2)
                 col1.caption('Selected')
                 col1.write('Location Type')
-                col1.write(selected_record['Metropolitan'][0])
+                col1.write(selected_record['METROPOLITAN'][0])
                 col2.caption('Similar')
                 col2.write('Location Type')
-                col2.write(compare_record['Metropolitan'][0])
+                col2.write(compare_record['METROPOLITAN'][0])
                 st.divider()
                 col1,col2=st.columns(2)
                 col1.caption('Selected')
@@ -719,27 +733,27 @@ if selected=="Search":
                 st.divider()
                 col1,col2=st.columns(2)
                 col1.caption('Selected')
-                col1.metric('Pct Area is Water','{:.2%}'.format(selected_record['Pct_Water'][0]))
+                col1.metric('Pct Area is Water','{:.2%}'.format(selected_record['PCT_WATER'][0]))
                 col2.caption('Similar')
-                col2.metric('Pct Area is Water','{:.2%}'.format(compare_record['Pct_Water'][0]),delta='{:.2%}'.format(dif_record['Pct_Water'][0]))
+                col2.metric('Pct Area is Water','{:.2%}'.format(compare_record['PCT_WATER'][0]),delta='{:.2%}'.format(dif_record['PCT_WATER'][0]))
                 st.divider()
                 col1,col2=st.columns(2)
                 col1.caption('Selected')
-                col1.metric('Environmental Quality Index','{:.2f}'.format(selected_record['Env_Index'][0].round(2)))
+                col1.metric('Environmental Quality Index','{:.2f}'.format(selected_record['ENV_INDEX'][0].round(2)))
                 col2.caption('Similar')
-                col2.metric('Environmental Quality Index','{:.2f}'.format(compare_record['Env_Index'][0].round(2)),delta='{:.2f}'.format(dif_record['Env_Index'][0]))
+                col2.metric('Environmental Quality Index','{:.2f}'.format(compare_record['ENV_INDEX'][0].round(2)),delta='{:.2f}'.format(dif_record['ENV_INDEX'][0]))
                 st.divider()
                 col1,col2=st.columns(2)
                 col1.caption('Selected')
-                col1.metric('Pct within 0.5 mile to Park','{:.1%}'.format(selected_record['Pct_ToPark_HalfMile'][0].round(2)/100))
+                col1.metric('Pct within 0.5 mile to Park','{:.1%}'.format(selected_record['PCT_TOPARK_HALFMILE'][0].round(2)/100))
                 col2.caption('Similar')
-                col2.metric('Pct within 0.5 mile to Park','{:.1%}'.format(compare_record['Pct_ToPark_HalfMile'][0].round(2)/100),delta='{:.1%}'.format(dif_record['Pct_ToPark_HalfMile'][0]/100))
+                col2.metric('Pct within 0.5 mile to Park','{:.1%}'.format(compare_record['PCT_TOPARK_HALFMILE'][0].round(2)/100),delta='{:.1%}'.format(dif_record['PCT_TOPARK_HALFMILE'][0]/100))
                 st.divider()
                 col1,col2=st.columns(2)
                 col1.caption('Selected')
-                col1.metric('Pct within 1 mile to Park','{:.1%}'.format(selected_record['Pct_ToPark_OneMile'][0].round(2)/100))
+                col1.metric('Pct within 1 mile to Park','{:.1%}'.format(selected_record['PCT_TOPARK_ONEMILE'][0].round(2)/100))
                 col2.caption('Similar')
-                col2.metric('Pct within 1 mile to Park','{:.1%}'.format(compare_record['Pct_ToPark_OneMile'][0].round(2)/100),delta='{:.1%}'.format(dif_record['Pct_ToPark_OneMile'][0]/100))
+                col2.metric('Pct within 1 mile to Park','{:.1%}'.format(compare_record['PCT_TOPARK_ONEMILE'][0].round(2)/100),delta='{:.1%}'.format(dif_record['PCT_TOPARK_ONEMILE'][0]/100))
                                  
 
 #About Page
