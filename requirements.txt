@@ -6,5 +6,6 @@ Requests==2.29.0
 scikit_learn==0.24.1
 snowflake_connector_python==3.0.2
 streamlit==1.21.0
+-r https://raw.githubusercontent.com/snowflakedb/snowflake-connector-python/main/tested_requirements/requirements_39.reqs
 streamlit_lottie==0.0.3
 streamlit_option_menu==0.3.2
