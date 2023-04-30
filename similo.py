@@ -109,7 +109,7 @@ if selected=="Search":
         state_select=col1.multiselect('Filter Results by State(s)',states)
         count_select=col2.number_input(label='How many similar locations returned? (5-25)',min_value=5,max_value=25,value=10,step=5)
         st.subheader('Data Category Importance')
-        st.caption('Default = 1.0, move the slider higher or lower for each category where lower values mean lower importance and higher values mean higher importance'
+        st.caption('Default = 1.0, move the slider higher or lower for each category where lower values mean lower importance and higher values mean higher importance')
         people_select=st.slider(label='People',min_value=0.1, max_value=2.0, step=0.1, value=1.0)
         home_select=st.slider(label='Home',min_value=0.1, max_value=2.0, step=0.1, value=1.0)
         work_select=st.slider(label='Work',min_value=0.1, max_value=2.0, step=0.1, value=1.0)
