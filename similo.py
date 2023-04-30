@@ -109,7 +109,7 @@ if selected=="Search":
         state_select=col1.multiselect('Filter Results by State(s)',states)
         count_select=col2.number_input(label='How many similar locations returned? (5-25)',min_value=5,max_value=25,value=10,step=5)
         st.subheader('Data Category Importance')
-        col1,col2,col3=st.columns([1,1,.3])
+        col1,col2,col3=st.columns([1,1,.4])
         col1.caption('0.1 = Least Important')
         col2.caption('1.0 = Default')
         col3.caption('2.0 = Most Important')
