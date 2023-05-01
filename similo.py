@@ -233,7 +233,7 @@ if selected=="Search":
             st.divider()
 
             st.header('Location Deep Dive')
-            rank_select=st.selectbox('From rankings above, which one do you want to analyze?',list(df_top10['Ranking']))
+            rank_select=st.selectbox('Select from rankings above',list(df_top10['Ranking']))
             if rank_select:
                 compare_record=df_top10[df_top10['Ranking']==rank_select].reset_index(drop=True)
                 compare_city=compare_record['CITYSTATE'][0]
@@ -545,7 +545,7 @@ if selected=="Search":
         st.divider()
 
         st.header('Location Deep Dive')
-        rank_select=st.selectbox('From rankings above, which one do you want to investigate?',list(df_top10['RANKING']))
+        rank_select=st.selectbox('Select from rankings above',list(df_top10['RANKING']))
         if rank_select:
             compare_record=df_top10[df_top10['RANKING']==rank_select].reset_index(drop=True)
             compare_zip=compare_record['ZIP'][0]
@@ -596,9 +596,9 @@ if selected=="Search":
                 )
                 col1,col2=st.columns(2)
                 col1.subheader('Selected')
-                col1.write(selected_zip+' '+selected_county)
+                col1.write(selected_zip+' in '+selected_county+' County, '+selected_state)
                 col2.subheader('Similar')
-                col2.write(compare_zip+' '+compare_county)
+                col2.write(compare_zip+' in '+compare_county+' County, '+compare_state)
                 st.divider()
                 col1,col2=st.columns(2)
                 fig = px.pie(selected_record, values=[selected_record['PCT_UNDER_18'][0], selected_record['PCT_18_65'][0], selected_record['PCT_OVER_65'][0]],names=['< 18','18-65','> 65'])
@@ -636,9 +636,9 @@ if selected=="Search":
             with tab3:
                 col1,col2=st.columns(2)
                 col1.subheader('Selected')
-                col1.write(selected_zip+' '+selected_county)
+                col1.write(selected_zip+' in '+selected_county+' County, '+selected_state)
                 col2.subheader('Similar')
-                col2.write(compare_zip+' '+compare_county)
+                col2.write(compare_zip+' in '+compare_county+' County, '+compare_state)
                 st.divider()
                 col1,col2=st.columns(2)
                 fig = px.pie(selected_record, values=[selected_record['PCT_OWN'][0], selected_record['PCT_RENT'][0]],names=['Percent Own Home','Percent Renting'])
@@ -682,9 +682,9 @@ if selected=="Search":
             with tab4:
                 col1,col2=st.columns(2)
                 col1.subheader('Selected')
-                col1.write(selected_zip+' '+selected_county)
+                col1.write(selected_zip+' in '+selected_county+' County, '+selected_state)
                 col2.subheader('Similar')
-                col2.write(compare_zip+' '+compare_county)
+                col2.write(compare_zip+' in '+compare_county+' County, '+compare_state)
                 st.divider()
                 col1,col2=st.columns(2)
                 fig = px.pie(selected_record, values=[selected_record['PCT_SERVICE'][0], selected_record['PCT_BC'][0],selected_record['PCT_WC'][0]],names=['Percent Service','Percent Blue Collar','Percent White Collar'])
@@ -710,9 +710,9 @@ if selected=="Search":
             with tab5:
                 col1,col2=st.columns(2)
                 col1.subheader('Selected')
-                col1.write(selected_zip+' '+selected_county)
+                col1.write(selected_zip+' in '+selected_county+' County, '+selected_state)
                 col2.subheader('Similar')
-                col2.write(compare_zip+' '+compare_county)
+                col2.write(compare_zip+' in '+compare_county+' County, '+compare_state)
                 st.divider()
                 col1,col2=st.columns(2)
                 col1.caption('Selected')
