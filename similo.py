@@ -101,8 +101,6 @@ if selected=="Search":
     master_zip,master_city=pull_clean()
     master_zip = master_zip.rename(columns={'ZCTA5': 'ZIP'})
     master_zip['ZIP'] = master_zip['ZIP'].astype(str).str.zfill(5)
-    master_zip
-    master_city
 
     loc_select=st.radio('Type',['Zip','City'],horizontal=True)
 
