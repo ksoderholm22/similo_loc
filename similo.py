@@ -89,7 +89,7 @@ if selected=="Intro":
 
     #Tutorial Video
     st.header('Tutorial Video')
-    video_file = open('Similo_Tutorial.mp4', 'rb')
+    video_file = open('Similo_Tutorial2_Compressed.mp4', 'rb')
     video_bytes = video_file.read()
     st.video(video_bytes)
     
