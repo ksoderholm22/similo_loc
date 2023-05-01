@@ -208,7 +208,7 @@ if selected=="Search":
                 @st.cache_data
                 def convert_df(df):
                     return df.to_csv().encode('utf-8')
-                cols=['Rank','OVERALL','PEOPLE','HOME','WORK','ENVIRONMENT','CITYSTATE']
+                cols=['Rank','CITYSTATE','OVERALL','PEOPLE','HOME','WORK','ENVIRONMENT']
                 df=df_top10[cols+['SAVE','NOTES']]
                 df=df.set_index('Rank')
                 edited_df=st.experimental_data_editor(df)
@@ -520,7 +520,8 @@ if selected=="Search":
             @st.cache_data
             def convert_df(df):
                 return df.to_csv().encode('utf-8')
-            cols=['RANK','OVERALL','PEOPLE','HOME','WORK','ENVIRONMENT','ZIP','COUNTY_NAME']
+            df_top10['COUNTY_STATE']=df_top10['COUNTY_NAME']+' County, '+df_top10['STATE_SHORT']
+            cols=['ZIP','COUNTY_STATE','RANK','OVERALL','PEOPLE','HOME','WORK','ENVIRONMENT']
             df=df_top10[cols+['SAVE','NOTES']]
             df=df.set_index('RANK')
             edited_df=st.experimental_data_editor(df)
