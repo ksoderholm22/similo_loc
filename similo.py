@@ -489,7 +489,6 @@ if selected=="Search":
         df_top10 = pd.merge(df_similarity, filt_master_zip, left_on='index', right_index=True).reset_index(drop=True)
         df_top10=df_top10.loc[1:count_select]
         df_top10['RANK']=list(range(1,count_select+1))
-        df_top10
         df_top10['RANKING']=df_top10['RANK'].astype(str)+' - Zip Code '+df_top10['ZIP']+' from '+df_top10['COUNTY_NAME']+' County, '+df_top10['STATE_SHORT']
         df_top10['LAT_R']=selected_record['LAT'][0]
         df_top10['LON_R']=selected_record['LON'][0]
