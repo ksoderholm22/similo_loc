@@ -7,4 +7,4 @@ streamlit==1.21.0
 -r https://raw.githubusercontent.com/snowflakedb/snowflake-connector-python/main/tested_requirements/requirements_39.reqs
 streamlit_lottie==0.0.3
 streamlit_option_menu==0.3.2
-pyarrow==10.01
+pyarrow==10.0.1
