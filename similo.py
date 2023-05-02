@@ -35,20 +35,8 @@ def load_lottiefile(filepath: str):
 
 @st.cache_data
 def pull_clean():
-    conn = snowflake.connector.connect(
-    user="KSODERHOLM22",
-    password="N3tL1ft!",
-    account="khbkccp-ap31754",
-    warehouse="COMPUTE_WH",
-    database="SIMILO",
-    schema="PUBLIC"
-    )
-    cur = conn.cursor()
-    cur.execute('select * from MASTER_ZIP')
-    master_zip=cur.fetch_pandas_all()
-    cur.execute('select * from MASTER_CITY')
-    master_city=cur.fetch_pandas_all()
-    conn.close()
+    master_zip=pd.read_csv('MASTER_ZIP.csv',dtype={'ZCTA5': str})
+    master_city=pd.read_csv('MASTER_CITY.csv',dtype={'ZCTA5': str})
     return master_zip, master_city
 
 
@@ -99,8 +87,10 @@ if selected=="Search":
     st.subheader('Select Location')
 
     master_zip,master_city=pull_clean()
+    master_zip.columns = master_zip.columns.str.upper()
     master_zip = master_zip.rename(columns={'ZCTA5': 'ZIP'})
     master_zip['ZIP'] = master_zip['ZIP'].astype(str).str.zfill(5)
+    master_city.columns = master_city.columns.str.upper()
 
     loc_select=st.radio('Type',['Zip','City'],horizontal=True)
 
