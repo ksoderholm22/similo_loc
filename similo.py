@@ -790,5 +790,5 @@ if selected=='About':
     col1.write('**Experience:**    8 YOE in Data Science across Banking, Fintech, and Retail')
     col1.write('**Contact:**    kevin.soderholm@gmail.com or [linkedin](https://www.linkedin.com/in/kevin-soderholm-67788829/)')
     col1.write('**Thanks for stopping by!**')
-    col2.image('kevin2.png',width=300)
+    col2.image('kevin3.png',width=300)
 
