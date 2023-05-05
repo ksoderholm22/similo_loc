@@ -748,31 +748,38 @@ if selected=="Search":
 if selected=='About':
     st.title('Data')
     st.subheader('All data for this project was publicly sourced from:')
-    
+    col1,col2,col3=st.columns(3)
+    col1.subheader('Source')
+    col2.subheader('Description')
+    col3.subheader('Link')
     with st.container():
-        col1,col2=st.columns([1,2])
-        col1.image('census_graphic.png',width=150)
-        col2.write('Demographic, housing, and industry data was sourced from the U.S. Census Bureau.')
+        col1,col2,col3=st.columns(3)
+        #col1.image('census_graphic.png',width=150)
+        col1.write('U.S. Census Bureau')
+        col2.write('Demographic, housing, industry, etc. at zip level')
         col2.write('American Community Survey, 5-Year Profiles, 2021, datasets DP02 - DP05')
-        col2.write('See: https://data.census.gov/')
+        col3.write('See: https://data.census.gov/')
     
     with st.container():
-        col1,col2=st.columns([1,2])
-        col1.image('cdc.png',width=150)
-        col2.write('Environmental location data was sourced from the Centers for Disease Control and Prevention (CDC).')
-        col2.write('See: https://data.cdc.gov/')
+        col1,col2,col3=st.columns(3)
+        #col1.image('cdc.png',width=150)
+        col1.write('Centers for Disease Control and Prevention')
+        col2.write('Environmental factors at county level')
+        col3.write('See: https://data.cdc.gov/')
     
     with st.container():
-        col1,col2=st.columns([1,2])
-        col1.image('hud.png',width=150)
-        col2.write('Crosswalk files to connect zip codes, counties, MSAs, and States was sourced from the U.S. Department of Housing and Urban Development (HUD).')
-        col2.write('See: https://www.huduser.gov/portal/datasets/usps_crosswalk.html')
+        col1,col2,col3=st.columns(3)
+        #col1.image('hud.png',width=150)\
+        col1.write('U.S. Department of Housing and Urban Development')
+        col2.write('Crosswalk files to connect zip codes, counties, MSAs, and States')
+        col3.write('See: https://www.huduser.gov/portal/datasets/usps_crosswalk.html')
 
     with st.container():
-        col1,col2=st.columns([1,2])
-        col1.image('ods.png',width=150)
-        col2.write('Mapping file between zip code and standardized USPS city was sourced from OpenDataSoft.')
-        col2.write('See: https://data.opendatasoft.com/pages/home/')
+        col1,col2,col3=st.columns(3)
+        #col1.image('ods.png',width=150)
+        col1.write('OpenDataSoft')
+        col2.write('Mapping file between zip codes and standardized USPS city names')
+        col3.write('See: https://data.opendatasoft.com/pages/home/')
     
     st.divider()
     
