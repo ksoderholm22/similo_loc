@@ -747,7 +747,7 @@ if selected=="Search":
 #About Page
 if selected=='About':
     st.title('Data')
-    st.subheader('All data for this project was publicly sourced from:')
+    #st.subheader('All data for this project was publicly sourced from:')
     col1,col2,col3=st.columns(3)
     col1.subheader('Source')
     col2.subheader('Description')
