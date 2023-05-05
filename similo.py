@@ -770,9 +770,9 @@ if selected=='About':
     with st.container():
         col1,col2,col3=st.columns(3)
         #col1.image('hud.png',width=150)\
-        col1.write(':blue[U.S. Department of Housing and Urban Development]')
+        col1.write(':blue[U.S. Dept Housing and Urban Development]')
         col2.write('Mapping files between zips, counties, and states')
-        col3.write('https://www.huduser.gov/portal/datasets/usps_crosswalk.html')
+        col3.write('https://www.huduser.gov/portal/datasets/')
 
     with st.container():
         col1,col2,col3=st.columns(3)
