@@ -755,9 +755,9 @@ if selected=='About':
     with st.container():
         col1,col2,col3=st.columns(3)
         #col1.image('census_graphic.png',width=150)
-        col1.write('U.S. Census Bureau')
+        col1.write(':blue[U.S. Census Bureau]')
         col2.write('Demographic, housing, industry, etc. at zip level')
-        col2.write('American Community Survey, 5-Year Profiles, 2021, datasets DP02 - DP05')
+        #col2.write('American Community Survey, 5-Year Profiles, 2021, datasets DP02 - DP05')
         col3.write('See: https://data.census.gov/')
     
     with st.container():
