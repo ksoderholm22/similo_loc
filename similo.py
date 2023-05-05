@@ -756,7 +756,7 @@ if selected=='About':
         col1,col2,col3=st.columns(3)
         #col1.image('census_graphic.png',width=150)
         col1.write(':blue[U.S. Census Bureau]')
-        col2.write('Demographic, housing, industry, etc. at zip level')
+        col2.write('Demographic, housing, industry at zip level')
         #col2.write('American Community Survey, 5-Year Profiles, 2021, datasets DP02 - DP05')
         col3.write('https://data.census.gov/')
     
@@ -771,14 +771,14 @@ if selected=='About':
         col1,col2,col3=st.columns(3)
         #col1.image('hud.png',width=150)\
         col1.write(':blue[U.S. Dept Housing and Urban Development]')
-        col2.write('Mapping files between zips, counties, and states')
+        col2.write('Mapping zip to county')
         col3.write('https://www.huduser.gov/portal/datasets/')
 
     with st.container():
         col1,col2,col3=st.columns(3)
         #col1.image('ods.png',width=150)
         col1.write(':blue[OpenDataSoft]')
-        col2.write('Mapping file between zips and USPS city names')
+        col2.write('Mapping zip to USPS city')
         col3.write('https://data.opendatasoft.com/pages/home/')
     
     st.divider()
