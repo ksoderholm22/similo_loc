@@ -789,5 +789,5 @@ if selected=='About':
     st.write('**Experience:**    8 YOE in Data Science across Banking, Fintech, and Retail')
     st.write('**Contact:**    kevin.soderholm@gmail.com or [linkedin](https://www.linkedin.com/in/kevin-soderholm-67788829/)')
     st.write('**Thanks for stopping by!**')
-    st.image('kevin7.png')
+    st.image('kevin8.png')
 
