@@ -92,7 +92,7 @@ if selected=="Search":
     master_zip['ZIP'] = master_zip['ZIP'].astype(str).str.zfill(5)
     master_city.columns = master_city.columns.str.upper()
 
-    loc_select=st.radio('Type',['Zip','City'],horizontal=True)
+    loc_select=st.radio('Type',['Zip','City'],horizontal=True, label_visibility="collapsed")
 
     if loc_select=='City':
         city_select=st.selectbox(label='city',options=['City']+list(master_city['CITYSTATE'].unique()),label_visibility='collapsed')
