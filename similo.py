@@ -758,28 +758,28 @@ if selected=='About':
         col1.write(':blue[U.S. Census Bureau]')
         col2.write('Demographic, housing, industry, etc. at zip level')
         #col2.write('American Community Survey, 5-Year Profiles, 2021, datasets DP02 - DP05')
-        col3.write('See: https://data.census.gov/')
+        col3.write('https://data.census.gov/')
     
     with st.container():
         col1,col2,col3=st.columns(3)
         #col1.image('cdc.png',width=150)
-        col1.write('Centers for Disease Control and Prevention')
+        col1.write(':blue[Centers for Disease Control and Prevention]')
         col2.write('Environmental factors at county level')
-        col3.write('See: https://data.cdc.gov/')
+        col3.write('https://data.cdc.gov/')
     
     with st.container():
         col1,col2,col3=st.columns(3)
         #col1.image('hud.png',width=150)\
-        col1.write('U.S. Department of Housing and Urban Development')
-        col2.write('Crosswalk files to connect zip codes, counties, MSAs, and States')
-        col3.write('See: https://www.huduser.gov/portal/datasets/usps_crosswalk.html')
+        col1.write(':blue[U.S. Department of Housing and Urban Development]')
+        col2.write('Mapping files between zips, counties, and states')
+        col3.write('https://www.huduser.gov/portal/datasets/usps_crosswalk.html')
 
     with st.container():
         col1,col2,col3=st.columns(3)
         #col1.image('ods.png',width=150)
-        col1.write('OpenDataSoft')
-        col2.write('Mapping file between zip codes and standardized USPS city names')
-        col3.write('See: https://data.opendatasoft.com/pages/home/')
+        col1.write(':blue[OpenDataSoft]')
+        col2.write('Mapping file between zips and USPS city names')
+        col3.write('https://data.opendatasoft.com/pages/home/')
     
     st.divider()
     
