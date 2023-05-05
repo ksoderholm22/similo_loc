@@ -787,6 +787,6 @@ if selected=='About':
     st.write('**Name:**    Kevin Soderholm')
     st.write('**Education:**    M.S. Applied Statistics')
     st.write('**Experience:**    8 YOE in Data Science across Banking, Financial Technology, and Retail')
-    st.write('**Contact:**    kevin.soderholm@gmail.com or [linkedin](https://www.linkedin.com/in/kevin-soderholm-67788829/'))
+    st.write('**Contact:**    kevin.soderholm@gmail.com or [linkedin](https://www.linkedin.com/in/kevin-soderholm-67788829/)')
     st.write('**Thanks for stopping by!**')
 
