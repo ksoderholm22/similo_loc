@@ -785,6 +785,7 @@ if selected=='About':
     
     st.title('Creator')
     with st.container():
+        col1,col2=st.columns(2)
         col1.write('')
         col1.write('**Name:**    Kevin Soderholm')
         col1.write('**Education:**    M.S. Applied Statistics')
